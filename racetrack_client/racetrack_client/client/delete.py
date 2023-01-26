@@ -12,8 +12,8 @@ from racetrack_client.utils.request import parse_response, Requests
 logger = get_logger(__name__)
 
 
-def delete_fatman(workdir: str, lifecycle_url: Optional[str], version: Optional[str]):
-    """Delete versioned fatman instance"""
+def delete_job(workdir: str, lifecycle_url: Optional[str], version: Optional[str]):
+    """Delete versioned job instance"""
     client_config = load_client_config()
     manifest = load_validated_manifest(workdir)
     lifecycle_url = resolve_lifecycle_url(client_config, lifecycle_url)
@@ -21,10 +21,10 @@ def delete_fatman(workdir: str, lifecycle_url: Optional[str], version: Optional[
 
     version = version or manifest.version
 
-    logger.debug(f'Deleting fatman "{manifest.name}" v{version} from {lifecycle_url}...')
+    logger.debug(f'Deleting job "{manifest.name}" v{version} from {lifecycle_url}...')
     r = Requests.delete(
-        f'{lifecycle_url}/api/v1/fatman/{manifest.name}/{version}',
+        f'{lifecycle_url}/api/v1/job/{manifest.name}/{version}',
         headers=get_auth_request_headers(user_auth),
     )
     parse_response(r, 'Lifecycle response error')
-    logger.info(f'Fatman "{manifest.name}" v{version} has been deleted from {lifecycle_url}')
+    logger.info(f'Job "{manifest.name}" v{version} has been deleted from {lifecycle_url}')

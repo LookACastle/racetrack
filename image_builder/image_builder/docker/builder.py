@@ -20,7 +20,7 @@ from racetrack_client.log.logs import get_logger
 from racetrack_client.manifest import Manifest
 from racetrack_client.utils.shell import shell, CommandError, shell_output
 from racetrack_client.utils.url import join_paths
-from racetrack_commons.deploy.image import get_fatman_image
+from racetrack_commons.deploy.image import get_job_image
 from racetrack_commons.plugin.engine import PluginEngine
 
 logger = get_logger(__name__)
@@ -44,8 +44,8 @@ class DockerBuilder(ImageBuilder):
         _wait_for_docker_engine_ready()
 
         metric_labels = {
-            'fatman_name': manifest.name,
-            'fatman_version': manifest.version,
+            'job_name': manifest.name,
+            'job_version': manifest.version,
         }
         Path(config.build_logs_dir).mkdir(parents=True, exist_ok=True)
         logs_filename = f'{config.build_logs_dir}/{deployment_id}.log'
@@ -65,28 +65,28 @@ class DockerBuilder(ImageBuilder):
                 dockerfile_path = workspace / manifest.docker.dockerfile_path
             else:
                 with wrap_context(f'templating Dockerfile {progress}'):
-                    dockerfile_path = workspace / f'.fatman-{image_index}.Dockerfile'
+                    dockerfile_path = workspace / f'.job-{image_index}.Dockerfile'
                     racetrack_version = os.environ.get('DOCKER_TAG', 'latest')
                     template_dockerfile(manifest, template_path, dockerfile_path, base_image,
                                         git_version, racetrack_version, job_type.version, env_vars)
 
             try:
 
-                fatman_image = get_fatman_image(config.docker_registry, config.docker_registry_namespace, manifest.name, tag, image_index)
-                logger.info(f'building Fatman image {progress}: {fatman_image}, deployment ID: {deployment_id}, keeping logs in {logs_filename}')
-                with wrap_context(f'building fatman image {progress}'):
-                    logs += build_container_image(fatman_image, dockerfile_path, workspace, metric_labels, logs_filename)
-                    logger.info(f'Fatman image {progress} has been built: {fatman_image}')
+                job_image = get_job_image(config.docker_registry, config.docker_registry_namespace, manifest.name, tag, image_index)
+                logger.info(f'building Job image {progress}: {job_image}, deployment ID: {deployment_id}, keeping logs in {logs_filename}')
+                with wrap_context(f'building job image {progress}'):
+                    logs += build_container_image(job_image, dockerfile_path, workspace, metric_labels, logs_filename)
+                    logger.info(f'Job image {progress} has been built: {job_image}')
                         
-                built_images.append(fatman_image)
+                built_images.append(job_image)
                 metric_images_built.inc()
             except CommandError as e:
                 metric_images_building_errors.inc()
-                logger.error(f'building Fatman image {progress}: {e}')
-                return built_images, e.stdout, f'building Fatman image {progress}: {e}'
+                logger.error(f'building Job image {progress}: {e}')
+                return built_images, e.stdout, f'building Job image {progress}: {e}'
             except Exception as e:
                 metric_images_building_errors.inc()
-                raise ContextError(f'building Fatman image {progress}') from e
+                raise ContextError(f'building Job image {progress}') from e
 
         return built_images, logs, None
 
@@ -116,7 +116,7 @@ def _build_base_image(
             metric_labels,
             base_logs_filename,
         )
-        logger.info(f'base Fatman image has been built and pushed: {base_image}')
+        logger.info(f'base Job image has been built and pushed: {base_image}')
     return base_image
 
 
@@ -166,9 +166,9 @@ def _wait_for_docker_engine_ready():
 
 
 def get_base_image_name(docker_registry: str, registry_namespace: str, name: str, tag: str, module_index: int = 0) -> str:
-    """Return full name of Fatman entrypoint image"""
+    """Return full name of Job entrypoint image"""
     if module_index == 0:
-        image_type = 'fatman-base'
+        image_type = 'job-base'
     else:
-        image_type = f'fatman-base-{module_index}'
+        image_type = f'job-base-{module_index}'
     return join_paths(docker_registry, registry_namespace, image_type, f'{name}:{tag}')

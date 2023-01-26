@@ -98,17 +98,17 @@
         "targets": [
           {
             "exemplar": true,
-            "expr": "requested_fatman_deployments_total",
+            "expr": "requested_job_deployments_total",
             "interval": "",
             "legendFormat": "",
             "refId": "A"
           },
           {
             "exemplar": true,
-            "expr": "sum(increase(requested_fatman_deployments_total[1m]))",
+            "expr": "sum(increase(requested_job_deployments_total[1m]))",
             "hide": false,
             "interval": "",
-            "legendFormat": "requested_fatman_deployments_total increased",
+            "legendFormat": "requested_job_deployments_total increased",
             "refId": "B"
           }
         ],
@@ -181,7 +181,7 @@
         ],
         "thresholds": [],
         "timeRegions": [],
-        "title": "Fatmen",
+        "title": "Jobs",
         "tooltip": {
           "shared": true,
           "sort": 0,

@@ -15,8 +15,8 @@ logger = get_logger(__name__)
 
 def show_runtime_logs(workdir: str, lifecycle_url: Optional[str], tail: int, follow: bool):
     """
-    Show logs from fatman output
-    :param workdir: directory with fatman.yaml manifest
+    Show logs from job output
+    :param workdir: directory with job.yaml manifest
     :param lifecycle_url: URL to Lifecycle API
     :param tail: number of recent lines to show
     :param follow: whether to follow logs output stream
@@ -25,7 +25,7 @@ def show_runtime_logs(workdir: str, lifecycle_url: Optional[str], tail: int, fol
     manifest = load_validated_manifest(workdir)
     lifecycle_url = resolve_lifecycle_url(client_config, lifecycle_url)
     user_auth = get_user_auth(client_config, lifecycle_url)
-    logger.info(f'Retrieving runtime logs of fatman "{manifest.name}" v{manifest.version} from {lifecycle_url}...')
+    logger.info(f'Retrieving runtime logs of job "{manifest.name}" v{manifest.version} from {lifecycle_url}...')
 
     if follow:
         _show_runtime_logs_following(lifecycle_url, manifest, tail)
@@ -35,14 +35,14 @@ def show_runtime_logs(workdir: str, lifecycle_url: Optional[str], tail: int, fol
 
 def _show_runtime_logs_once(lifecycle_url: str, manifest: Manifest, tail: int, user_auth: str):
     r = Requests.get(
-        f'{lifecycle_url}/api/v1/fatman/{manifest.name}/{manifest.version}/logs',
+        f'{lifecycle_url}/api/v1/job/{manifest.name}/{manifest.version}/logs',
         params={'tail': tail},
         headers=get_auth_request_headers(user_auth),
     )
     response = parse_response_object(r, 'Lifecycle response error')
     logs: str = response['logs']
     log_lines = len(logs.splitlines())
-    logger.info(f'Viewing the latest logs from fatman "{manifest.name}" v{manifest.version} below'
+    logger.info(f'Viewing the latest logs from job "{manifest.name}" v{manifest.version} below'
                 f' ({log_lines} lines):\n---')
     print(logs)
 
@@ -52,19 +52,19 @@ def _show_runtime_logs_following(lifecycle_url: str, manifest: Manifest, tail: i
         print(line.strip())
 
     resource_properties = {
-        'fatman_name': manifest.name,
-        'fatman_version': manifest.version,
+        'job_name': manifest.name,
+        'job_version': manifest.version,
         'tail': str(tail),
     }
     consumer = LogsConsumer(lifecycle_url, 'lifecycle/socket.io', resource_properties, on_next_line)
-    logger.info(f'Streaming live logs from fatman "{manifest.name}" v{manifest.version} below:\n---')
+    logger.info(f'Streaming live logs from job "{manifest.name}" v{manifest.version} below:\n---')
     consumer.connect_and_wait()
 
 
 def show_build_logs(workdir: str, lifecycle_url: Optional[str], tail: int = 0):
     """
-    Show output of latest fatman image building process
-    :param workdir: directory with fatman.yaml manifest
+    Show output of latest job image building process
+    :param workdir: directory with job.yaml manifest
     :param lifecycle_url: URL to Lifecycle API
     :param tail: number of recent lines to show. If zero, all logs are displayed.
     """
@@ -72,15 +72,15 @@ def show_build_logs(workdir: str, lifecycle_url: Optional[str], tail: int = 0):
     manifest = load_validated_manifest(workdir)
     lifecycle_url = resolve_lifecycle_url(client_config, lifecycle_url)
     user_auth = get_user_auth(client_config, lifecycle_url)
-    logger.info(f'Retrieving build logs of fatman "{manifest.name}" v{manifest.version} from {lifecycle_url}...')
+    logger.info(f'Retrieving build logs of job "{manifest.name}" v{manifest.version} from {lifecycle_url}...')
 
     r = Requests.get(
-        f'{lifecycle_url}/api/v1/fatman/{manifest.name}/{manifest.version}/build-logs',
+        f'{lifecycle_url}/api/v1/job/{manifest.name}/{manifest.version}/build-logs',
         params={'tail': tail},
         headers=get_auth_request_headers(user_auth),
     )
     response = parse_response_object(r, 'Lifecycle response error')
     logs: str = response['logs']
     log_lines = len(logs.splitlines())
-    logger.info(f'Recent build logs of "{manifest.name}" fatman ({log_lines} lines):\n')
+    logger.info(f'Recent build logs of "{manifest.name}" job ({log_lines} lines):\n')
     print(logs)

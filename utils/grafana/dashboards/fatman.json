@@ -36,7 +36,7 @@
       },
       "id": 14,
       "panels": [],
-      "title": "Fatman requests",
+      "title": "Job requests",
       "type": "row"
     },
     {
@@ -128,7 +128,7 @@
           "refId": "B"
         }
       ],
-      "title": "Rate of fatman calls",
+      "title": "Rate of job calls",
       "type": "timeseries"
     },
     {
@@ -395,7 +395,7 @@
           "refId": "A"
         }
       ],
-      "title": "Fatman active requests (Unfinished)",
+      "title": "Job active requests (Unfinished)",
       "type": "timeseries"
     },
     {
@@ -408,7 +408,7 @@
       },
       "id": 28,
       "panels": [],
-      "title": "Fatman response time",
+      "title": "Job response time",
       "type": "row"
     },
     {
@@ -624,7 +624,7 @@
           "refId": "A"
         }
       ],
-      "title": "Average Fatman Response time",
+      "title": "Average Job Response time",
       "type": "timeseries"
     },
     {
@@ -1190,7 +1190,7 @@
         "type": "adhoc"
       },
       {
-        "allValue": "fatman-.+",
+        "allValue": "job-.+",
         "current": {
           "selected": false,
           "text": "All",
@@ -1235,7 +1235,7 @@
     ]
   },
   "timezone": "",
-  "title": "Fatman",
+  "title": "Job",
   "uid": "KZoFMs_nz",
   "version": 4,
   "weekStart": ""

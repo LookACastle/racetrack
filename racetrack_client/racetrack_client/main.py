@@ -3,15 +3,15 @@ import sys
 
 from racetrack_client import __version__
 from racetrack_client.client.deploy import send_deploy_request, DeploymentError
-from racetrack_client.client.delete import delete_fatman
-from racetrack_client.client.move import move_fatman
+from racetrack_client.client.delete import delete_job
+from racetrack_client.client.move import move_job
 from racetrack_client.client.logs import show_runtime_logs, show_build_logs
 from racetrack_client.client_config.auth import login_user_auth, logout_user_auth
 from racetrack_client.client_config.io import load_client_config
 from racetrack_client.client_config.update import set_credentials, set_config_setting, set_config_url_alias
 from racetrack_client.plugin.bundler.bundle import bundle_plugin
 from racetrack_client.plugin.install import install_plugin, list_available_job_types, list_installed_plugins, uninstall_plugin
-from racetrack_client.client.run import run_fatman_locally
+from racetrack_client.client.run import run_job_locally
 from racetrack_client.log.exception import log_exception
 from racetrack_client.log.logs import configure_logs
 from racetrack_client.log.logs import get_logger
@@ -34,62 +34,62 @@ def main():
 
     # racetrack deploy
     parser_deploy = subparsers.add_parser(
-        'deploy', help='Send request deploying a Fatman to the Racetrack cluster')
-    parser_deploy.add_argument('workdir', default='.', nargs='?', help='directory with fatman.yaml manifest')
+        'deploy', help='Send request deploying a Job to the Racetrack cluster')
+    parser_deploy.add_argument('workdir', default='.', nargs='?', help='directory with job.yaml manifest')
     parser_deploy.add_argument('racetrack_url', default='', nargs='?', help='URL to Racetrack server or alias name')
-    parser_deploy.add_argument('--force', action='store_true', help='overwrite existing fatman')
+    parser_deploy.add_argument('--force', action='store_true', help='overwrite existing job')
     parser_deploy.add_argument('--context-local', action='store_true', default=None, dest='local_context', 
-        help='force building fatman from local files')
+        help='force building job from local files')
     parser_deploy.add_argument('--context-git', action='store_false', default=None, dest='local_context', 
-        help='force building fatman from git repository')
+        help='force building job from git repository')
     parser_deploy.set_defaults(func=_deploy)
 
     # racetrack validate
-    parser_validate = subparsers.add_parser('validate', help='Validate Fatman manifest file')
+    parser_validate = subparsers.add_parser('validate', help='Validate Job manifest file')
     parser_validate.add_argument('path', default='.', nargs='?',
-                                 help='path to a Fatman manifest file or to a directory with it')
+                                 help='path to a Job manifest file or to a directory with it')
     parser_validate.set_defaults(func=_validate)
 
     # racetrack logs
-    parser_logs = subparsers.add_parser('logs', help='Show logs from fatman output')
-    parser_logs.add_argument('workdir', default='.', nargs='?', help='directory with fatman.yaml manifest')
+    parser_logs = subparsers.add_parser('logs', help='Show logs from job output')
+    parser_logs.add_argument('workdir', default='.', nargs='?', help='directory with job.yaml manifest')
     parser_logs.add_argument('racetrack_url', default='', nargs='?', help='URL to Racetrack server or alias name')
     parser_logs.add_argument('--tail', default=20, nargs='?', type=int, help='number of recent lines to show')
     parser_logs.add_argument('--follow', '-f', action='store_true', help='follow logs output stream')
     parser_logs.set_defaults(func=_logs)
 
     # racetrack build-logs
-    parser_build_logs = subparsers.add_parser('build-logs', help='Show build logs from fatman image building')
-    parser_build_logs.add_argument('workdir', default='.', nargs='?', help='directory with fatman.yaml manifest')
+    parser_build_logs = subparsers.add_parser('build-logs', help='Show build logs from job image building')
+    parser_build_logs.add_argument('workdir', default='.', nargs='?', help='directory with job.yaml manifest')
     parser_build_logs.add_argument('racetrack_url', default='', nargs='?', help='URL to Racetrack server or alias name')
     parser_build_logs.add_argument('--tail', default=0, nargs='?', type=int,
                                    help='number of recent lines to show, all logs by default')
     parser_build_logs.set_defaults(func=_build_logs)
 
     # racetrack delete
-    parser_delete = subparsers.add_parser('delete', help='Delete fatman instance')
-    parser_delete.add_argument('workdir', default='.', nargs='?', help='directory with fatman.yaml manifest')
+    parser_delete = subparsers.add_parser('delete', help='Delete job instance')
+    parser_delete.add_argument('workdir', default='.', nargs='?', help='directory with job.yaml manifest')
     parser_delete.add_argument('racetrack_url', default='', nargs='?', help='URL to Racetrack server or alias name')
-    parser_delete.add_argument('--version', nargs='?', type=str, help='fatman version to delete')
-    parser_delete.set_defaults(func=_delete_fatman)
+    parser_delete.add_argument('--version', nargs='?', type=str, help='job version to delete')
+    parser_delete.set_defaults(func=_delete_job)
 
     # racetrack move
-    parser_move = subparsers.add_parser('move', help='Move fatman from one infrastructure target to another fatman instance')
+    parser_move = subparsers.add_parser('move', help='Move job from one infrastructure target to another job instance')
     parser_move.add_argument('--remote', type=str, help='Racetrack server\'s URL or alias name')
-    parser_move.add_argument('--name', required=True, type=str, help='fatman name to move out')
-    parser_move.add_argument('--version', required=True, type=str, help='fatman version to move out')
+    parser_move.add_argument('--name', required=True, type=str, help='job name to move out')
+    parser_move.add_argument('--version', required=True, type=str, help='job version to move out')
     parser_move.add_argument('--infrastructure', required=True, type=str, help='infrastructure target to move to')
-    parser_move.set_defaults(func=_move_fatman)
+    parser_move.set_defaults(func=_move_job)
 
     # racetrack run-local
-    parser_run = subparsers.add_parser('run-local', help='Run fatman locally')
-    parser_run.add_argument('workdir', default='.', nargs='?', help='directory with fatman.yaml manifest')
+    parser_run = subparsers.add_parser('run-local', help='Run job locally')
+    parser_run.add_argument('workdir', default='.', nargs='?', help='directory with job.yaml manifest')
     parser_run.add_argument('racetrack_url', default='', nargs='?', help='URL to Racetrack server or alias name')
     parser_run.add_argument('--port', type=int, default=None, nargs='?', help='HTTP port to run the server on')
     parser_run.add_argument('--context-local', action='store_true', default=None, dest='local_context', 
-                            help='force building fatman from local files')
+                            help='force building job from local files')
     parser_run.add_argument('--context-git', action='store_false', default=None, dest='local_context', 
-                            help='force building fatman from git repository')
+                            help='force building job from git repository')
     parser_run.set_defaults(func=_run_local)
 
     # racetrack version
@@ -214,12 +214,12 @@ def _build_logs(args: argparse.Namespace):
     show_build_logs(args.workdir, args.racetrack_url, args.tail)
 
 
-def _delete_fatman(args: argparse.Namespace):
-    delete_fatman(args.workdir, args.racetrack_url, args.version)
+def _delete_job(args: argparse.Namespace):
+    delete_job(args.workdir, args.racetrack_url, args.version)
 
 
-def _move_fatman(args: argparse.Namespace):
-    move_fatman(args.remote, args.name, args.version, args.infrastructure)
+def _move_job(args: argparse.Namespace):
+    move_job(args.remote, args.name, args.version, args.infrastructure)
 
 
 def _show_config(args: argparse.Namespace):
@@ -240,7 +240,7 @@ def _logout(args: argparse.Namespace):
 
 
 def _run_local(args: argparse.Namespace):
-    run_fatman_locally(args.workdir, args.racetrack_url, local_context=args.local_context, port=args.port)
+    run_job_locally(args.workdir, args.racetrack_url, local_context=args.local_context, port=args.port)
 
 
 def _install_plugin(args: argparse.Namespace):

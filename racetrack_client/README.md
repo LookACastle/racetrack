@@ -30,13 +30,13 @@ This will install `racetrack` CLI tool. Verify installation by running `racetrac
 Run `racetrack --help` to see usage.
 
 ## Deploying
-To deploy a job, just run in the place where `fatman.yaml` is located:
+To deploy a job, just run in the place where `job.yaml` is located:
 ```bash
 racetrack deploy . https://racetrack.platform.example.com/lifecycle
 ```
 
 `racetrack deploy [WORKDIR] [RACETRACK_URL]` has 2 optional arguments:
-- `WORKDIR` - a place where the `fatman.yaml` is, by default it's current directory
+- `WORKDIR` - a place where the `job.yaml` is, by default it's current directory
 - `RACETRACK_URL` - URL address to Racetrack server, where a job should be deployed. 
   If not given, it will be deployed to a URL configured in a local client config, 
   by default it's set to a local cluster at `http://localhost:7002`.

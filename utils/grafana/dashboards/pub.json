@@ -36,7 +36,7 @@
       },
       "id": 14,
       "panels": [],
-      "title": "Fatman proxy requests",
+      "title": "Job proxy requests",
       "type": "row"
     },
     {
@@ -119,14 +119,14 @@
             "uid": "PBFA97CFB590B2093"
           },
           "exemplar": true,
-          "expr": "sum(irate(pub_fatman_proxy_requests{fatman_name=~\"$fatman_name\"}[$__rate_interval])) by (fatman_name, fatman_version)",
+          "expr": "sum(irate(pub_job_proxy_requests{job_name=~\"$job_name\"}[$__rate_interval])) by (job_name, job_version)",
           "hide": false,
           "interval": "",
-          "legendFormat": "{{fatman_name}} {{fatman_version}}",
+          "legendFormat": "{{job_name}} {{job_version}}",
           "refId": "B"
         }
       ],
-      "title": "Rate of Fatman Proxy calls",
+      "title": "Rate of Job Proxy calls",
       "type": "timeseries"
     },
     {
@@ -206,13 +206,13 @@
             "uid": "PBFA97CFB590B2093"
           },
           "exemplar": true,
-          "expr": "sum(pub_fatman_proxy_requests_started{fatman_name=~\"$fatman_name\"} - pub_fatman_proxy_requests_done{fatman_name=~\"$fatman_name\"}) by (fatman_name, fatman_version)",
+          "expr": "sum(pub_job_proxy_requests_started{job_name=~\"$job_name\"} - pub_job_proxy_requests_done{job_name=~\"$job_name\"}) by (job_name, job_version)",
           "interval": "",
-          "legendFormat": "{{fatman_name}} {{fatman_version}}",
+          "legendFormat": "{{job_name}} {{job_version}}",
           "refId": "A"
         }
       ],
-      "title": "Fatman proxy active requests (Unfinished)",
+      "title": "Job proxy active requests (Unfinished)",
       "type": "timeseries"
     },
     {
@@ -225,7 +225,7 @@
       },
       "id": 28,
       "panels": [],
-      "title": "Fatman proxy response time",
+      "title": "Job proxy response time",
       "type": "row"
     },
     {
@@ -261,7 +261,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "exemplar": false,
-          "expr": "sum(idelta(pub_fatman_call_response_time_histogram_bucket{fatman_name=~\"$fatman_name\"}[$__rate_interval])) by (le)",
+          "expr": "sum(idelta(pub_job_call_response_time_histogram_bucket{job_name=~\"$job_name\"}[$__rate_interval])) by (le)",
           "format": "heatmap",
           "instant": false,
           "interval": "",
@@ -341,7 +341,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "exemplar": true,
-          "expr": "sum(pub_fatman_call_response_time_histogram_bucket{fatman_name=~\"$fatman_name\"}) by (le)",
+          "expr": "sum(pub_job_call_response_time_histogram_bucket{job_name=~\"$job_name\"}) by (le)",
           "format": "heatmap",
           "instant": false,
           "interval": "",
@@ -435,13 +435,13 @@
             "uid": "PBFA97CFB590B2093"
           },
           "exemplar": true,
-          "expr": "(sum(pub_fatman_call_response_time{fatman_name=~\"$fatman_name\"}) by (fatman_name, fatman_version)) / (sum(pub_fatman_proxy_requests_done{fatman_name=~\"$fatman_name\"}) by (fatman_name, fatman_version))",
+          "expr": "(sum(pub_job_call_response_time{job_name=~\"$job_name\"}) by (job_name, job_version)) / (sum(pub_job_proxy_requests_done{job_name=~\"$job_name\"}) by (job_name, job_version))",
           "interval": "",
-          "legendFormat": "{{fatman_name}} {{fatman_version}}",
+          "legendFormat": "{{job_name}} {{job_version}}",
           "refId": "A"
         }
       ],
-      "title": "Average Fatman Response time",
+      "title": "Average Job Response time",
       "type": "timeseries"
     },
     {
@@ -454,7 +454,7 @@
       },
       "id": 22,
       "panels": [],
-      "title": "Fatman proxy response code",
+      "title": "Job proxy response code",
       "type": "row"
     },
     {
@@ -552,9 +552,9 @@
             "uid": "PBFA97CFB590B2093"
           },
           "exemplar": true,
-          "expr": "sum(irate(pub_fatman_proxy_response_codes{status_code=\"200\",fatman_name=~\"$fatman_name\"}[$__rate_interval])) by (status_code, fatman_name, fatman_version)",
+          "expr": "sum(irate(pub_job_proxy_response_codes{status_code=\"200\",job_name=~\"$job_name\"}[$__rate_interval])) by (status_code, job_name, job_version)",
           "interval": "",
-          "legendFormat": "{{status_code}} - {{fatman_name}} {{fatman_version}}",
+          "legendFormat": "{{status_code}} - {{job_name}} {{job_version}}",
           "refId": "A"
         },
         {
@@ -563,14 +563,14 @@
             "uid": "PBFA97CFB590B2093"
           },
           "exemplar": true,
-          "expr": "sum(irate(pub_fatman_proxy_response_codes{status_code!=\"200\",fatman_name=~\"$fatman_name\"}[$__rate_interval])) by (status_code, fatman_name, fatman_version)",
+          "expr": "sum(irate(pub_job_proxy_response_codes{status_code!=\"200\",job_name=~\"$job_name\"}[$__rate_interval])) by (status_code, job_name, job_version)",
           "hide": false,
           "interval": "",
-          "legendFormat": "{{status_code}} - {{fatman_name}} {{fatman_version}}",
+          "legendFormat": "{{status_code}} - {{job_name}} {{job_version}}",
           "refId": "B"
         }
       ],
-      "title": "Fatman response codes rate",
+      "title": "Job response codes rate",
       "type": "timeseries"
     },
     {
@@ -667,13 +667,13 @@
             "uid": "PBFA97CFB590B2093"
           },
           "exemplar": true,
-          "expr": "sum(pub_fatman_proxy_response_codes{fatman_name=~\"$fatman_name\"}) by (status_code, fatman_name, fatman_version)",
+          "expr": "sum(pub_job_proxy_response_codes{job_name=~\"$job_name\"}) by (status_code, job_name, job_version)",
           "interval": "",
-          "legendFormat": "{{status_code}} - {{fatman_name}} {{fatman_version}}",
+          "legendFormat": "{{status_code}} - {{job_name}} {{job_version}}",
           "refId": "A"
         }
       ],
-      "title": "Total Fatman response codes",
+      "title": "Total Job response codes",
       "type": "timeseries"
     },
     {
@@ -782,7 +782,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "exemplar": true,
-          "expr": "sum(irate(pub_fatman_proxy_errors[$__rate_interval]))",
+          "expr": "sum(irate(pub_job_proxy_errors[$__rate_interval]))",
           "hide": false,
           "interval": "",
           "legendFormat": "reverse proxy errors",
@@ -806,10 +806,10 @@
             "uid": "PBFA97CFB590B2093"
           },
           "exemplar": true,
-          "expr": "sum(irate(pub_fatman_proxy_requests[$__rate_interval]))",
+          "expr": "sum(irate(pub_job_proxy_requests[$__rate_interval]))",
           "hide": false,
           "interval": "",
-          "legendFormat": "total fatman proxy rate",
+          "legendFormat": "total job proxy rate",
           "refId": "H"
         },
         {
@@ -818,7 +818,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "exemplar": true,
-          "expr": "sum(irate(pub_fatman_proxy_request_errors[$__rate_interval]))",
+          "expr": "sum(irate(pub_job_proxy_request_errors[$__rate_interval]))",
           "hide": false,
           "interval": "",
           "legendFormat": "proxy request errors",
@@ -912,9 +912,9 @@
             "uid": "PBFA97CFB590B2093"
           },
           "exemplar": true,
-          "expr": "sum(increase(pub_overall_fatman_proxy_response_time[$__rate_interval])) / sum(increase(pub_fatman_proxy_requests[$__rate_interval]))",
+          "expr": "sum(increase(pub_overall_job_proxy_response_time[$__rate_interval])) / sum(increase(pub_job_proxy_requests[$__rate_interval]))",
           "interval": "",
-          "legendFormat": "overall Fatman proxy",
+          "legendFormat": "overall Job proxy",
           "refId": "A"
         },
         {
@@ -923,7 +923,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "exemplar": true,
-          "expr": "sum(increase(pub_lifecycle_call_time[$__rate_interval])) / sum(increase(pub_fatman_proxy_requests[$__rate_interval]))",
+          "expr": "sum(increase(pub_lifecycle_call_time[$__rate_interval])) / sum(increase(pub_job_proxy_requests[$__rate_interval]))",
           "hide": false,
           "interval": "",
           "legendFormat": "lifecycle calls",
@@ -935,14 +935,14 @@
             "uid": "PBFA97CFB590B2093"
           },
           "exemplar": true,
-          "expr": "sum(increase(pub_fatman_call_response_time[$__rate_interval])) / sum(increase(pub_fatman_proxy_requests[$__rate_interval]))",
+          "expr": "sum(increase(pub_job_call_response_time[$__rate_interval])) / sum(increase(pub_job_proxy_requests[$__rate_interval]))",
           "hide": false,
           "interval": "",
-          "legendFormat": "fatman call",
+          "legendFormat": "job call",
           "refId": "C"
         }
       ],
-      "title": "Lifecycle vs Fatman average response time",
+      "title": "Lifecycle vs Job average response time",
       "type": "timeseries"
     },
     {
@@ -1192,15 +1192,15 @@
           "text": "All",
           "value": "$__all"
         },
-        "definition": "label_values(pub_fatman_proxy_requests, fatman_name)",
+        "definition": "label_values(pub_job_proxy_requests, job_name)",
         "hide": 0,
         "includeAll": true,
-        "label": "fatman_name",
+        "label": "job_name",
         "multi": false,
-        "name": "fatman_name",
+        "name": "job_name",
         "options": [],
         "query": {
-          "query": "label_values(pub_fatman_proxy_requests, fatman_name)",
+          "query": "label_values(pub_job_proxy_requests, job_name)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,

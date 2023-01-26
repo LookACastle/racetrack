@@ -43,12 +43,12 @@ def send_deploy_request(
     local_context: Optional[bool] = None,
 ):
     """
-    Send request deploying a new Fatman to running Lifecycle instance
-    :param workdir: directory with fatman.yaml manifest
+    Send request deploying a new Job to running Lifecycle instance
+    :param workdir: directory with job.yaml manifest
     :param manifest: manifest to overwrite (if not taken from workdir)
     :param client_config: client configuration to use (if not the defaullt)
     :param lifecycle_url: URL to Racetrack server or alias name
-    :param force: overwrite existing fatman without asking
+    :param force: overwrite existing job without asking
     :param local_context: decides whether to build from local files or from git:
         True - build an image from local build context, 
         False - build from git repository, 
@@ -81,11 +81,11 @@ def send_deploy_request(
     logger.info(f'job deployment requested: {deploy_id}')
 
     try:
-        fatman_url = _wait_for_deployment_result(lifecycle_url, deploy_id, user_auth)
+        job_url = _wait_for_deployment_result(lifecycle_url, deploy_id, user_auth)
     except Exception as e:
         raise DeploymentError(e)
 
-    logger.info(f'Fatman "{manifest.name}" has been deployed. Check out {fatman_url} to access your fatman')
+    logger.info(f'Job "{manifest.name}" has been deployed. Check out {job_url} to access your job')
 
 
 def get_deploy_request_payload(
@@ -118,7 +118,7 @@ def _wait_for_deployment_result(lifecycle_url: str, deploy_id: str, user_auth: s
     if status == 'failed':
         raise RuntimeError(response['error'])
     if status == 'done':
-        return response.get('fatman', {}).get('pub_url')
+        return response.get('job', {}).get('pub_url')
 
     phase = response.get('phase')
     if phase:

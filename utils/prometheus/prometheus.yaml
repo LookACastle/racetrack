@@ -31,11 +31,11 @@ scrape_configs:
       - targets:
           - "pub:7105"
 
-  - job_name: fatman-v-0-0-1
+  - job_name: job-v-0-0-1
     scheme: http
     metrics_path: /metrics
     dns_sd_configs:
       - names: 
-          - 'fatman-adder-v-0-0-1'
+          - 'job-adder-v-0-0-1'
         type: A
         port: 7000
